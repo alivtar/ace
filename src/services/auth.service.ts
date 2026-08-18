@@ -2,6 +2,7 @@ import User from '../models/user.model';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
 import bcrypt from 'bcryptjs';
+import { signAccessToken } from '../utils/jwt';
 
 const registerUser = async (email: string, password: string) => {
   const normalizedEmail = email.toLowerCase().trim();
@@ -19,8 +20,41 @@ const registerUser = async (email: string, password: string) => {
   return user;
 };
 
+const loginUser = async (email: string, password: string): Promise<string> => {
+  const normalizedEmail = email.toLowerCase().trim();
+
+  const existingUser = await User.findUserByEmail(normalizedEmail);
+
+  if (!existingUser) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
+  }
+
+  if (!existingUser.password_hash) {
+    // todo: maybe user has logged in with google
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid Email or Password.');
+  }
+
+  const isPasswordValid = await bcrypt.compare(
+    password,
+    existingUser.password_hash,
+  );
+
+  if (!isPasswordValid) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid Email or Password.');
+  }
+
+  const accessToken = await signAccessToken({
+    userId: existingUser.id,
+    email: existingUser.email,
+    role: existingUser.role,
+  });
+
+  return accessToken;
+};
+
 const authService = {
   registerUser,
+  loginUser,
 };
 
 export default authService;

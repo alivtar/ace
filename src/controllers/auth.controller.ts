@@ -13,8 +13,23 @@ const register = catchAsync(async (req, res) => {
   });
 });
 
+const login = catchAsync(async (req, res) => {
+  const { email, password } = req.body;
+
+  const accessToken = await authService.loginUser(email, password);
+
+  // todo: how to make all success/error responses all over the project have the same schema?
+  res.status(200).json({
+    success: true,
+    data: {
+      accessToken,
+    },
+  });
+});
+
 const authController = {
   register,
+  login,
 };
 
 export default authController;

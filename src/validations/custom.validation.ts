@@ -10,7 +10,7 @@ const password = (value: string, helpers: CustomHelpers) => {
 
   if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
     return helpers.message({
-      custom: 'Password must contain at least 1 letter and 1 number',
+      custom: 'Password must contain at least 1 letter and 1 number.',
     });
   }
 

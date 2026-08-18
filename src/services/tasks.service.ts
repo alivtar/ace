@@ -11,6 +11,11 @@ const createTask = async (
   return task;
 };
 
-const tasksService = { createTask };
+const getTasks = async () => {
+  const tasks = await Task.getTasks();
+  return tasks;
+};
+
+const tasksService = { createTask, getTasks };
 
 export default tasksService;

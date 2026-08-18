@@ -18,8 +18,19 @@ const createTask = async (
   return result.rows[0];
 };
 
+const getTasks = async () => {
+  const result = await pool.query<TaskRow>(
+    `
+        SELECT * FROM support_tasks
+    `,
+  );
+
+  return result.rows;
+};
+
 const Task = {
   createTask,
+  getTasks,
 };
 
 export default Task;

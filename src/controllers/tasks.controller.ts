@@ -14,8 +14,19 @@ const createTask = catchAsync(async (req, res) => {
   });
 });
 
+const getTasks = catchAsync(async (req, res) => {
+  // todo: enable filters for `title` and `status`
+  const tasks = await tasksService.getTasks();
+
+  res.status(200).json({
+    success: true,
+    data: tasks,
+  });
+});
+
 const tasksController = {
   createTask,
+  getTasks,
 };
 
 export default tasksController;

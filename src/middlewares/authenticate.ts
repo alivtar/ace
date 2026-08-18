@@ -14,9 +14,10 @@ export const authenticate = (
     next(
       new ApiError(httpStatus.UNAUTHORIZED, 'Authorization header is missing.'),
     );
+    return;
   }
 
-  const accessToken = bearerToken!.split(' ')[1];
+  const accessToken = bearerToken.split(' ')[1];
 
   const payload = verifyAccessToken(accessToken);
 

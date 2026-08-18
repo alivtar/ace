@@ -8,3 +8,10 @@ node_modules/
 
 # Logs
 npm-debug.log*
+
+# Build output
+dist/
+
+# Docker
+.docker/
+docker-data/

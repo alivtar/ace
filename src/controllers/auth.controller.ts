@@ -27,9 +27,19 @@ const login = catchAsync(async (req, res) => {
   });
 });
 
+const me = catchAsync(async (req, res) => {
+  res.status(200).json({
+    success: true,
+    data: {
+      user: req.user,
+    },
+  });
+});
+
 const authController = {
   register,
   login,
+  me,
 };
 
 export default authController;

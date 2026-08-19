@@ -1,4 +1,3 @@
-import logger from '../configs/logger.js';
 import pool from '../db/pool.js';
 import type { TaskRow, TaskStatus, UpdateTask } from '../types/Task.js';
 
@@ -19,17 +18,23 @@ const createTask = async (
   return result.rows[0];
 };
 
-const getTasks = async () => {
+const getTasks = async (userId: string) => {
   const result = await pool.query<TaskRow>(
     `
         SELECT * FROM support_tasks
+        WHERE user_id = $1
     `,
+    [userId],
   );
 
   return result.rows;
 };
 
-const updateTask = async (taskId: string, taskData: UpdateTask) => {
+const updateTask = async (
+  taskId: string,
+  userId: string,
+  taskData: UpdateTask,
+) => {
   const result = await pool.query<TaskRow>(
     `
         UPDATE support_tasks
@@ -37,10 +42,10 @@ const updateTask = async (taskId: string, taskData: UpdateTask) => {
             title = $1,
             status = $2,
             updated_at = NOW()
-        WHERE id = $3
+        WHERE id = $3 AND user_id = $4
         RETURNING *
     `,
-    [taskData.title, taskData.status, taskId],
+    [taskData.title, taskData.status, taskId, userId],
   );
 
   return result.rows[0];
@@ -48,6 +53,7 @@ const updateTask = async (taskId: string, taskData: UpdateTask) => {
 
 const partialUpdateTask = async (
   taskId: string,
+  userId: string,
   partialTaskData: Partial<UpdateTask>,
 ) => {
   const setClauseValues = Object.values(partialTaskData);
@@ -64,10 +70,23 @@ const partialUpdateTask = async (
         SET
             ${setClause},
             updated_at = NOW()
-        WHERE id = $${setClauseItems.length + 1}
+        WHERE id = $${setClauseItems.length + 1} AND user_id = $${setClauseItems.length + 2}
         RETURNING *
     `,
-    [...setClauseValues, taskId],
+    [...setClauseValues, taskId, userId],
+  );
+
+  return result.rows[0];
+};
+
+const deleteTask = async (taskId: string, userId: string) => {
+  const result = await pool.query<TaskRow>(
+    `
+        DELETE FROM support_tasks
+        WHERE id = $1 AND user_id = $2
+        RETURNING *
+    `,
+    [taskId, userId],
   );
 
   return result.rows[0];
@@ -78,6 +97,7 @@ const Task = {
   getTasks,
   updateTask,
   partialUpdateTask,
+  deleteTask,
 };
 
 export default Task;

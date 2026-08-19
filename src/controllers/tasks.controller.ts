@@ -15,11 +15,13 @@ const createTask = catchAsync(async (req, res) => {
 });
 
 const getTasks = catchAsync(async (req, res) => {
+  const userId = req.user?.userId!;
+
   // todo: enable filters for `title` and `status`
   // todo: add pagination
-  const tasks = await tasksService.getTasks();
+  const tasks = await tasksService.getTasks(userId);
 
-  res.status(200).json({
+  res.status(httpStatus.OK).json({
     success: true,
     data: tasks,
   });
@@ -28,8 +30,12 @@ const getTasks = catchAsync(async (req, res) => {
 const updateTask = catchAsync(async (req, res) => {
   const taskId = req.params.taskId as string;
   const { title, status } = req.body;
+  const userId = req.user?.userId!;
 
-  const updatedTask = await tasksService.updateTask(taskId, { title, status });
+  const updatedTask = await tasksService.updateTask(taskId, userId, {
+    title,
+    status,
+  });
 
   res.status(httpStatus.OK).json({
     success: true,
@@ -39,12 +45,29 @@ const updateTask = catchAsync(async (req, res) => {
 
 const partialUpdateTask = catchAsync(async (req, res) => {
   const taskId = req.params.taskId as string;
+  const userId = req.user?.userId!;
 
-  const updatedTask = await tasksService.partialUpdateTask(taskId, req.body);
+  const updatedTask = await tasksService.partialUpdateTask(
+    taskId,
+    userId,
+    req.body,
+  );
 
   res.status(httpStatus.OK).json({
     success: true,
     data: updatedTask,
+  });
+});
+
+const deleteTask = catchAsync(async (req, res) => {
+  const taskId = req.params.taskId as string;
+  const userId = req.user?.userId!;
+
+  const deletedTask = await tasksService.deleteTask(taskId, userId);
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: deletedTask,
   });
 });
 
@@ -53,6 +76,7 @@ const tasksController = {
   getTasks,
   updateTask,
   partialUpdateTask,
+  deleteTask,
 };
 
 export default tasksController;

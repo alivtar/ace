@@ -28,4 +28,6 @@ tasksRouter.patch(
   tasksController.partialUpdateTask,
 );
 
+tasksRouter.delete('/:taskId', tasksController.deleteTask);
+
 export default tasksRouter;

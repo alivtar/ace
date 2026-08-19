@@ -16,9 +16,19 @@ const updateTask = {
   }),
 };
 
+const partialUpdateTask = {
+  body: Joi.object()
+    .keys({
+      title: Joi.string().max(150),
+      status: Joi.string().valid('OPEN', 'IN_PROGRESS', 'RESOLVED'),
+    })
+    .min(1),
+};
+
 const tasksValidations = {
   createTask,
   updateTask,
+  partialUpdateTask,
 };
 
 export default tasksValidations;

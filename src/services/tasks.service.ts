@@ -21,6 +21,14 @@ const updateTask = async (taskId: string, taskData: UpdateTask) => {
   return updatedTask;
 };
 
-const tasksService = { createTask, getTasks, updateTask };
+const partialUpdateTask = async (
+  taskId: string,
+  partialTaskData: Partial<UpdateTask>,
+) => {
+  const updatedTask = await Task.partialUpdateTask(taskId, partialTaskData);
+  return updatedTask;
+};
+
+const tasksService = { createTask, getTasks, updateTask, partialUpdateTask };
 
 export default tasksService;

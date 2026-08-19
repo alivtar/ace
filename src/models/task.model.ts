@@ -1,3 +1,4 @@
+import logger from '../configs/logger.js';
 import pool from '../db/pool.js';
 import type { TaskRow, TaskStatus, UpdateTask } from '../types/Task.js';
 
@@ -45,10 +46,38 @@ const updateTask = async (taskId: string, taskData: UpdateTask) => {
   return result.rows[0];
 };
 
+const partialUpdateTask = async (
+  taskId: string,
+  partialTaskData: Partial<UpdateTask>,
+) => {
+  const setClauseValues = Object.values(partialTaskData);
+
+  const setClauseItems = Object.entries(partialTaskData).map((item, idx) => {
+    return `${item[0]} = $${idx + 1}`;
+  });
+
+  const setClause = setClauseItems.join(', ');
+
+  const result = await pool.query<TaskRow>(
+    `
+        UPDATE support_tasks
+        SET
+            ${setClause},
+            updated_at = NOW()
+        WHERE id = $${setClauseItems.length + 1}
+        RETURNING *
+    `,
+    [...setClauseValues, taskId],
+  );
+
+  return result.rows[0];
+};
+
 const Task = {
   createTask,
   getTasks,
   updateTask,
+  partialUpdateTask,
 };
 
 export default Task;

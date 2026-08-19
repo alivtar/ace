@@ -22,4 +22,10 @@ tasksRouter.put(
   tasksController.updateTask,
 );
 
+tasksRouter.patch(
+  '/:taskId',
+  validate(tasksValidations.partialUpdateTask),
+  tasksController.partialUpdateTask,
+);
+
 export default tasksRouter;

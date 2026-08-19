@@ -37,10 +37,22 @@ const updateTask = catchAsync(async (req, res) => {
   });
 });
 
+const partialUpdateTask = catchAsync(async (req, res) => {
+  const taskId = req.params.taskId as string;
+
+  const updatedTask = await tasksService.partialUpdateTask(taskId, req.body);
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: updatedTask,
+  });
+});
+
 const tasksController = {
   createTask,
   getTasks,
   updateTask,
+  partialUpdateTask,
 };
 
 export default tasksController;

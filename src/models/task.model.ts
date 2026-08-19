@@ -1,5 +1,5 @@
 import pool from '../db/pool.js';
-import type { TaskRow, TaskStatus } from '../types/Task.js';
+import type { TaskRow, TaskStatus, UpdateTask } from '../types/Task.js';
 
 const createTask = async (
   title: string,
@@ -28,9 +28,27 @@ const getTasks = async () => {
   return result.rows;
 };
 
+const updateTask = async (taskId: string, taskData: UpdateTask) => {
+  const result = await pool.query<TaskRow>(
+    `
+        UPDATE support_tasks
+        SET
+            title = $1,
+            status = $2,
+            updated_at = NOW()
+        WHERE id = $3
+        RETURNING *
+    `,
+    [taskData.title, taskData.status, taskId],
+  );
+
+  return result.rows[0];
+};
+
 const Task = {
   createTask,
   getTasks,
+  updateTask,
 };
 
 export default Task;

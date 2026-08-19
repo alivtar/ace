@@ -1,5 +1,5 @@
 import Task from '../models/task.model';
-import type { TaskStatus } from '../types/Task';
+import type { TaskStatus, UpdateTask } from '../types/Task';
 
 const createTask = async (
   title: string,
@@ -16,6 +16,11 @@ const getTasks = async () => {
   return tasks;
 };
 
-const tasksService = { createTask, getTasks };
+const updateTask = async (taskId: string, taskData: UpdateTask) => {
+  const updatedTask = await Task.updateTask(taskId, taskData);
+  return updatedTask;
+};
+
+const tasksService = { createTask, getTasks, updateTask };
 
 export default tasksService;

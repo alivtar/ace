@@ -5,3 +5,8 @@ export type TaskRow = {
   title: string;
   status: TaskStatus;
 };
+
+export type UpdateTask = {
+  title: string;
+  status: TaskStatus;
+};

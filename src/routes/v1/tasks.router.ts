@@ -16,4 +16,10 @@ tasksRouter.post(
 
 tasksRouter.get('/', tasksController.getTasks);
 
+tasksRouter.put(
+  '/:taskId',
+  validate(tasksValidations.updateTask),
+  tasksController.updateTask,
+);
+
 export default tasksRouter;

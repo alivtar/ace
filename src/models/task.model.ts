@@ -1,5 +1,10 @@
 import pool from '../db/pool.js';
-import type { TaskRow, TaskStatus, UpdateTask } from '../types/Task.js';
+import type {
+  GetTasksFilters,
+  TaskRow,
+  TaskStatus,
+  UpdateTask,
+} from '../types/Task.js';
 
 const createTask = async (
   title: string,
@@ -18,13 +23,31 @@ const createTask = async (
   return result.rows[0];
 };
 
-const getTasks = async (userId: string) => {
+const getTasks = async (userId: string, filters: GetTasksFilters) => {
+  const conditions: Array<string> = ['user_id = $1'];
+  const values = [userId];
+  let conditionIdx: number = 2;
+
+  if (filters.search) {
+    conditions.push(`title ILIKE $${conditionIdx}`);
+    values.push(`%${filters.search}%`);
+    conditionIdx = conditionIdx + 1;
+  }
+
+  if (filters.status) {
+    conditions.push(`status = $${conditionIdx}`);
+    values.push(filters.status);
+    conditionIdx = conditionIdx + 1;
+  }
+
+  const whereClause = conditions.join(' AND ');
+
   const result = await pool.query<TaskRow>(
     `
         SELECT * FROM support_tasks
-        WHERE user_id = $1
+        WHERE ${whereClause}
     `,
-    [userId],
+    values,
   );
 
   return result.rows;

@@ -14,7 +14,11 @@ tasksRouter.post(
   tasksController.createTask,
 );
 
-tasksRouter.get('/', tasksController.getTasks);
+tasksRouter.get(
+  '/',
+  validate(tasksValidations.getTasks),
+  tasksController.getTasks,
+);
 
 tasksRouter.put(
   '/:taskId',

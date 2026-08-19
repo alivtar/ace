@@ -1,4 +1,5 @@
 import tasksService from '../services/tasks.service';
+import type { GetTasksFilters } from '../types/Task';
 import catchAsync from '../utils/catchAsync';
 import httpStatus from 'http-status';
 
@@ -16,10 +17,10 @@ const createTask = catchAsync(async (req, res) => {
 
 const getTasks = catchAsync(async (req, res) => {
   const userId = req.user?.userId!;
+  const filters = req.query as GetTasksFilters;
 
-  // todo: enable filters for `title` and `status`
   // todo: add pagination
-  const tasks = await tasksService.getTasks(userId);
+  const tasks = await tasksService.getTasks(userId, filters);
 
   res.status(httpStatus.OK).json({
     success: true,

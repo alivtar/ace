@@ -21,7 +21,7 @@ const validate =
 
     if (error) {
       const errorMessage = error.details
-        .map((details) => details.message)
+        .map((detail) => detail.message)
         .join(', ');
       return next(new ApiError(httpStatus.BAD_REQUEST, errorMessage));
     }

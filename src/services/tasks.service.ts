@@ -1,5 +1,5 @@
 import Task from '../models/task.model';
-import type { TaskStatus, UpdateTask } from '../types/Task';
+import type { GetTasksFilters, TaskStatus, UpdateTask } from '../types/Task';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
 
@@ -13,8 +13,8 @@ const createTask = async (
   return task;
 };
 
-const getTasks = async (userId: string) => {
-  const tasks = await Task.getTasks(userId);
+const getTasks = async (userId: string, filters: GetTasksFilters) => {
+  const tasks = await Task.getTasks(userId, filters);
   return tasks;
 };
 

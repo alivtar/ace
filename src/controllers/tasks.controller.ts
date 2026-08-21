@@ -19,6 +19,7 @@ const getTasks = catchAsync(async (req, res) => {
   const userId = req.user?.userId!;
   const filters = req.query as GetTasksFilters;
 
+  // todo: able user to filter by more than one status
   // todo: add pagination
   const tasks = await tasksService.getTasks(userId, filters);
 

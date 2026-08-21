@@ -10,6 +10,10 @@ type EnvVars = {
   JWT_SECRET: string;
   JWT_ACCESS_EXPIRATION_MINUTES: number;
   JWT_REFRESH_EXPIRATION_DAYS: number;
+  REDIS_URL: string;
+  CLOUDINARY_CLOUD_NAME: string;
+  CLOUDINARY_API_KEY: string;
+  CLOUDINARY_API_SECRET: string;
 };
 
 const envVarsSchema = Joi.object<EnvVars>()
@@ -28,6 +32,10 @@ const envVarsSchema = Joi.object<EnvVars>()
     JWT_REFRESH_EXPIRATION_DAYS: Joi.number()
       .default(30)
       .description('Days after which refresh tokens expire.'),
+    REDIS_URL: Joi.string().required().description('Redis connection URL'),
+    CLOUDINARY_CLOUD_NAME: Joi.string().required(),
+    CLOUDINARY_API_KEY: Joi.string().required(),
+    CLOUDINARY_API_SECRET: Joi.string().required(),
     // JWT_RESET_PASSWORD_EXPIRATION_MINUTES: Joi.number()
     //   .default(10)
     //   .description('Minutes after which reset password token expires.'),
@@ -50,6 +58,10 @@ const config = {
   JWT_SECRET: envVars.JWT_SECRET,
   JWT_ACCESS_EXPIRATION_MINUTES: envVars.JWT_ACCESS_EXPIRATION_MINUTES,
   JWT_REFRESH_EXPIRATION_DAYS: envVars.JWT_REFRESH_EXPIRATION_DAYS,
+  REDIS_URL: envVars.REDIS_URL,
+  CLOUDINARY_CLOUD_NAME: envVars.CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_API_KEY: envVars.CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET: envVars.CLOUDINARY_API_SECRET,
 } as const;
 
 export default config;

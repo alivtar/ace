@@ -5,7 +5,8 @@
     "start": "cross-env NODE_ENV=production node dist/server.js",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
-    "migrate": "tsx src/db/migrate.ts"
+    "migrate": "tsx src/db/migrate.ts",
+    "test": "tsx --test \"src/**/*.test.ts\""
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
@@ -34,6 +35,7 @@
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.11.0",
     "multer": "^2.2.0",
+    "openai": "^7.45.0",
     "pg": "^8.23.0",
     "pino": "^10.3.1",
     "redis": "^6.2.1"

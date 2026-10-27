@@ -22,25 +22,26 @@ export const buildIntentQuestions = (
       instructions:
         'This is a direct message from a customer to an online shop on Instagram. ' +
         'The message may be Persian, Finglish (Persian written in Latin letters), or English. ' +
-        'Choose the single intent that best describes the customer\'s main request. ' +
+        'Choose the single intent that best describes the customer\'s main request in `latest_message`. ' +
+        'Use `conversation` only for context, such as follow-up questions. ' +
         'Use "unknown" when nothing fits.',
       criteria,
     },
     [SENTIMENT_QUESTION_ID]: {
       type: 'score',
-      instructions: 'Rate the customer\'s emotional state from calm to angry.',
+      instructions: 'How frustrated or angry does the customer sound in `latest_message`?',
       criteria: ['calm', 'annoyed', 'angry'],
     },
     [NEEDS_HUMAN_QUESTION_ID]: {
       type: 'noul',
       instructions:
-        'Does the customer explicitly ask for a person, or describe a situation that an ' +
+        'Does `latest_message` explicitly ask for a person, or describe a situation that an ' +
         'automated shop assistant must not handle alone (complaints, refunds, legal or money disputes)?',
       criteria: { true: 'needs a person', false: 'an automated answer is fine' },
     },
     [MULTI_REQUEST_QUESTION_ID]: {
       type: 'noul',
-      instructions: 'Does the message contain two or more separate requests or questions?',
+      instructions: 'Does `latest_message` contain two or more separate requests or questions?',
       criteria: { true: 'several requests', false: 'one request' },
     },
   };
@@ -52,8 +53,8 @@ export const buildProductMatchQuestion = (
 ): JudgementQuestion => ({
   type: 'choice',
   instructions:
-    'A customer of an online shop asked about a product. Which candidate product is the customer ' +
-    'asking about? Choose "none" if none of them clearly matches.',
+    'A customer of an online shop asked about a product in `latest_message`. Which candidate product ' +
+    'does the customer mean? Choose "none" if none of them clearly matches.',
   criteria: {
     ...Object.fromEntries(candidates.map((candidate) => [candidate.key, candidate.description])),
     none: 'none of these products clearly matches',

@@ -1,4 +1,4 @@
-import { normalizePersian, toEnglishDigits } from '../utils/persian';
+import { normalizePersian } from '../utils/persian';
 
 // Last check before a reply is sent. The writer model can drift, so the bot verifies:
 //   1. Every price-sized number in the reply exists in the facts it was given.
@@ -28,10 +28,22 @@ const collectAllowedNumbers = (facts: unknown): Set<number> => {
   return allowed;
 };
 
-const extractNumbers = (text: string): number[] => {
-  const cleaned = toEnglishDigits(text).replace(/(\d)[,٬](?=\d{3}\b)/g, '$1');
-  const matches = cleaned.match(/\d+/g) ?? [];
-  return matches.map((digits) => Number(digits));
+const MULTIPLIER_FACTORS: Record<string, number> = { 'هزار': 1_000, 'میلیون': 1_000_000 };
+
+/**
+ * Numbers a reply states, with Persian multipliers applied: "250 هزار" -> 250000.
+ * Without this, a wrong price written with a multiplier would pass as a small number.
+ */
+export const extractNumbers = (text: string): number[] => {
+  const cleaned = normalizePersian(text).replace(/(\d)[,٬](?=\d{3}\b)/g, '$1');
+  const pattern = /(\d+(?:\.\d+)?)\s*(هزار|میلیون)?/g;
+  const numbers: number[] = [];
+  for (const match of cleaned.matchAll(pattern)) {
+    const base = Number(match[1]);
+    const factor = match[2] ? MULTIPLIER_FACTORS[match[2]] : 1;
+    numbers.push(Math.round(base * factor));
+  }
+  return numbers;
 };
 
 const collectFactKeys = (facts: unknown): Set<string> => {

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { validateReply } from './reply-validator';
+import { extractNumbers, validateReply } from './reply-validator';
 
 const facts = {
   kind: 'product',
@@ -38,4 +38,16 @@ test('rejects replies over the Instagram limit', () => {
 test('rejects empty replies', () => {
   const result = validateReply('   ', facts);
   assert.equal(result.ok, false);
+});
+
+test('applies Persian multipliers before checking prices', () => {
+  // 250 هزار is 250000 toman: allowed. 25 هزار is not in the facts: rejected.
+  assert.deepEqual(validateReply('قیمت ۲۵۰ هزار تومان است.', facts), { ok: true });
+  const wrong = validateReply('قیمت ۲۵ هزار تومان است.', facts);
+  assert.equal(wrong.ok, false);
+});
+
+test('extractNumbers reads Persian digits, separators and multipliers', () => {
+  assert.deepEqual(extractNumbers('۲,۵۰۰٬۰۰۰ تومان و ۱.۵ میلیون'), [2500000, 1500000]);
+  assert.deepEqual(extractNumbers('۳ روز'), [3]);
 });

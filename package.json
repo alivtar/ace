@@ -6,6 +6,7 @@
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "migrate": "tsx src/db/migrate.ts",
+    "worker": "tsx src/worker.ts",
     "test": "tsx --test \"src/**/*.test.ts\""
   },
   "devDependencies": {
